@@ -1,3 +1,7 @@
+<?php
+include "sendEmail.php";
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,5 +43,68 @@
       </div>
     </form>
   </div>
+  
+  <!-- jQuery script tag -->
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    
+    <!-- jQuery and Ajax JavaScript post to php backend and validation -->
+    <script type="text/javascript">
+        function sendEmail(event) {
+          event.preventDefault();
+          let name = $("#name");
+          let email = $("#email");
+          let phoneNumber = $("#phoneNumber");
+          let address = $("#address");
+          let message = $("#message");
+          
+          if (isNotEmpty(name) && validateEmail(email, email.val()) && isNotEmpty(phoneNumber) && isNotEmpty(address) && isNotEmpty(message)) {
+            $.ajax({
+              url: 'sendEmail.php',
+              method: 'POST',
+              dataType: 'json',
+              data: {
+                  name: name.val(),
+                  email: email.val(),
+                  phoneNumber: phoneNumber.val(),
+                  address: address.val(),
+                  message: message.val()
+                },
+              success: function(response) {
+                  $("#form")[0].reset();
+                  $(".sent-notification").text("Thank you, this message has been sent.");
+              },
+              error: function(xhr, status, error) {
+                  console.log(error);
+              }
+                
+            }) 
+          }
+          else {
+            $(".sent-notification").text("Form has not been sent, please enter your information correctly.");
+          }
+        }
+
+        function isNotEmpty(inputField) {
+          if(inputField.val() == "") {
+            inputField.css('borderBottom', '4px solid #9F2929');
+            return false;
+          }
+          else 
+          {
+            inputField.css('border', '');
+            return true;
+          }
+        }
+
+        function validateEmail(mailInputField, mailInputFieldVal) {
+          if (mailInputFieldVal.includes('@')) {
+            return true;
+          }
+          else {
+            mailInputField.css('borderBottom', '4px solid #9F2929');
+            return false;
+          }
+        }
+    </script>
 </body>
 </html>
